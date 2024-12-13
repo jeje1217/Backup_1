@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/join.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function sendNumber() {
+            $.ajax({
+                url: "/mailSend", // 이메일 인증 요청 엔드포인트
+                type: "post",
+                dataType: "json",
+                data: { "email": $("#email").val() },
+                success: function (data) {
+                    if (data.success) {
+                        alert("인증번호가 발송되었습니다.");
+                        $("#mail_number").css("display", "block"); // 인증번호 입력창 표시
+                        $("#Confirm").val(data.number); // 인증번호를 숨겨진 필드에 저장
+                    } else {
+                        alert("인증번호 발송에 실패했습니다. 다시 시도해주세요.");
+                    }
+                },
+                error: function () {
+                    alert("인증번호 발송 요청 중 오류가 발생했습니다.");
+                }
+            });
+        }
+
+        function confirmNumber() {
+            const inputNumber = $("#number").val();
+            const sentNumber = $("#Confirm").val();
+
+            if (inputNumber === sentNumber) {
+                alert("이메일 인증이 완료되었습니다.");
+                $("#emailVerified").val(true); // 이메일 인증 상태 업데이트
+            } else {
+                alert("인증번호가 일치하지 않습니다.");
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="main">
+    <div class="subMain">
+        <!-- 회원가입 폼 -->
+        <form th:action="@{/signup}" method="post">
+           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <h1><a th:href="@{/main}">Healthy Table</a></h1>
+            <div>
+                <!-- 아이디 -->
+                <div class="form-id">
+                    <label for="userId">아이디</label>
+                    <input type="text" id="userId" name="userId" placeholder="아이디" required>
+                    <button type="button" onclick="checkDuplicateId()">중복 체크</button>
+                </div>
+
+                <!-- 비밀번호 -->
+                <div class="form-pwd">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" placeholder="비밀번호" required>
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div class="form-pwd-check">
+                    <label for="passwordConfirm">비밀번호 확인</label>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 확인" required>
+                </div>
+
+                <!-- 이메일 -->
+                <div class="form-email">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" placeholder="이메일" required>
+                    <button type="button" onclick="sendNumber()">인증번호 발송</button>
+                </div>
+                <div id="mail_number" style="display: none;">
+                    <input type="text" id="number" name="number" placeholder="인증번호 입력">
+                    <button type="button" onclick="confirmNumber()">이메일 인증</button>
+                </div>
+                <input type="hidden" id="Confirm" name="Confirm">
+                <input type="hidden" id="emailVerified" name="emailVerified" value="false">
+
+                <!-- 이름 -->
+                <div class="form-name">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name" placeholder="이름" required>
+                </div>
+
+                <!-- 전화번호 -->
+                <div class="form-phone">
+                    <label for="phone">전화번호</label>
+                    <input type="tel" id="phone" name="phone" placeholder="전화번호" required>
+                </div>
+
+                <!-- 주소 -->
+                <div class="form-address">
+                    <label for="address">주소</label>
+                    <input type="text" id="address" name="address" placeholder="주소" required>
+                </div>
+
+                <!-- 생년월일 -->
+                <div class="form-birthdate">
+                    <label for="birthdate">생년월일 (YYMMDD)</label>
+                    <input type="text" id="birthdate" name="birthdate" placeholder="예: 980312" pattern="\\d{6}" required>
+                    <small>YYMMDD 형식으로 입력해주세요.</small>
+                </div>
+
+                <!-- 키 -->
+                <div class="form-height">
+                    <label for="height">키</label>
+                    <input type="number" id="height" name="height" placeholder="키 (cm)" required>
+                </div>
+
+                <!-- 몸무게 -->
+                <div class="form-weight">
+                    <label for="weight">몸무게</label>
+                    <input type="number" id="weight" name="weight" placeholder="몸무게 (kg)" required>
+                </div>
+
+                <!-- 성별 -->
+                <div class="form-gender">
+                    <label for="gender">성별</label>
+                    <select id="gender" name="gender" required>
+                        <option value="male">남성</option>
+                        <option value="female">여성</option>
+                    </select>
+                </div>
+
+                <!-- 회원가입 버튼 -->
+                <div class="join-button">
+                    <button type="submit">회원가입</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

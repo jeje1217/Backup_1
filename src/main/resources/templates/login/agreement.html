@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 약관 동의</title>
+</head>
+<body>
+<div class="main">
+    <h1>회원가입 약관 동의</h1>
+    <form th:action="@{/login/signup}" method="post">
+        <div>
+            <input type="checkbox" id="agree" name="agree" value="true">
+            <label for="agree">사이트 약관에 동의합니다.</label>
+        </div>
+        <button type="submit">다음</button>
+    </form>
+
+    <!-- 오류 메시지 출력 -->
+    <div th:if="${error}">
+        <p th:text="${error}" style="color: red;"></p>
+    </div>
+</div>
+</body>
+</html>
